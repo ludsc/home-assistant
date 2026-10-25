@@ -323,18 +323,42 @@ newgrp docker
 
 ### Passo 2: Clonar o repositório e subir os contêineres
 ```bash
-git clone https://github.com/mariacarlyni-pereira/home-assistant-iot.git
+git clone https://github.com/SEU_USUARIO/home-assistant-iot.git
 cd home-assistant-iot
 docker compose up -d --build
 ```
 
-### Passo 3: Conectar o Home Assistant ao Broker
-1. Abra o navegador em: `http://localhost:8123`.
-2. Conclua o cadastro de usuário inicial.
-3. Vá em **Configurações** $\rightarrow$ **Dispositivos e Serviços** $\rightarrow$ **Adicionar Integração**.
-4. Busque por **MQTT** e insira:
+### Passo 3: Conectar o Home Assistant ao Broker MQTT
+1. Abra o navegador em: `http://localhost:8123` (ou `http://<IP-DA-VM>:8123`).
+2. Conclua o cadastro inicial criando seu usuário e senha de administrador.
+3. No menu lateral esquerdo, vá em **Configurações** $\rightarrow$ **Dispositivos e Serviços**.
+4. Clique no botão **+ Adicionar Integração** e digite `MQTT`.
+5. Preencha os parâmetros de conexão:
    * **Broker:** `mosquitto`
    * **Porta:** `1883`
-   * *(Deixar usuário e senha em branco)*
+   * *(Deixar nome de usuário e senha em branco)*
    * Clique em **Enviar**.
-5. Pronto! As entidades e os gráficos de histórico já estarão recebendo as telemetrias do sensor IoT.
+
+---
+
+### Passo 4: Como Visualizar o Gráfico no Histórico (Passo a Passo)
+
+Para visualizar as medições em tempo real e a curva de variação do sensor IoT:
+
+1. No menu lateral esquerdo, clique em **Histórico** (ícone de barras gráficas, logo abaixo de "Atividade").
+   > **Atenção:** Não utilize a aba "Atividade" para buscar medições analógicas, pois ela monitora apenas eventos discretos de sistema. As curvas de telemetria ficam em **Histórico**.
+
+2. No painel esquerdo da tela de Histórico, clique no botão azul **`+ Adicionar alvo`**.
+3. Na janela de pesquisa:
+   * Certifique-se de que o filtro **`Entidades`** está marcado em azul (evite o filtro "Dispositivos").
+   * Digite `temperatura` e selecione **`Temperatura Sala (MQTT-SN)`**.
+   * Clique novamente em **`+ Adicionar alvo`**, digite `umidade` e selecione **`Umidade Sala (MQTT-SN)`**.
+
+4. O Home Assistant traçará instantaneamente o gráfico contínuo com os valores oscilando ao vivo a cada 5 segundos:
+
+![Visualização no Histórico](docs/img/historico_temperatura.png)
+
+5. (Opcional) Na tela inicial (**Visão Geral**), os sensores também já estarão disponíveis no card de **Favoritos** mostrando o valor instantâneo atual (`23,7 °C` e `54,2%`):
+
+![Visualização na Visão Geral](docs/img/dashboard_favoritos.png)
+
