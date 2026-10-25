@@ -356,7 +356,7 @@ Para visualizar as medições em tempo real e a curva de variação do sensor Io
 
 ![Visualização no Histórico](historico_temperatura_e_umidade.png)
 
-5. Na tela inicial (**Visão Geral**), os sensores também já estarão disponíveis no card de **Favoritos** mostrando o valor instantâneo atual (`23,7 °C` e `54,2%`):
+5. Na tela inicial (**Visão Geral**), os sensores também já estarão disponíveis no card de **Favoritos** mostrando o valor instantâneo atual:
 
 ![Visualização na Visão Geral](favoritos.png)
 
