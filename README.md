@@ -260,53 +260,51 @@ Todos os comandos devem ser executados na raiz do projeto:
 
 ---
 
-## 6. Testes Realizados e Validação Experimental
+## 6. Testes Realizados e Evidências de Validação (Guia de Prints)
 
-### Teste 1: Verificação da Execução dos 5 Contêineres
-Comando executado:
-```bash
-docker compose ps
-```
-Saída obtida no ambiente:
-```text
-NAME               IMAGE                                          COMMAND                  SERVICE            STATUS
-homeassistant      ghcr.io/home-assistant/home-assistant:stable   "/init"                  homeassistant      Up (healthy)
-mqtt-broker        eclipse-mosquitto:2                            "/docker-entrypoint.…"   mosquitto          Up
-mqtt-subscriber    home-assistant-iot-subscriber-mqtt             "python subscriber.py"   subscriber-mqtt    Up
-mqttsn-gateway     home-assistant-iot-gateway-mqttsn              "/app/MQTT-SNGateway…"   gateway-mqttsn     Up
-mqttsn-publisher   home-assistant-iot-publisher-mqttsn            "python publisher.py"    publisher-mqttsn   Up
-```
+Para comprovar o funcionamento de ponta a ponta da arquitetura, os testes foram organizados em **4 capturas de tela (prints) obrigatórias**:
 
-### Teste 2: Recepção dos Dados Convertidos pelo Subscriber MQTT
-Comando executado:
-```bash
-docker compose logs subscriber-mqtt --tail=12
-```
-Saída capturada em tempo real (provando a chegada dos dados convertidos via broker MQTT):
-```text
-============================================================
-[2026-10-25 21:15:05] MENSAGEM RECEBIDA VIA BROKER MQTT:
-  Topico:  sensores/temperatura
-  QoS:     0
-  Payload: 22.9
-============================================================
-============================================================
-[2026-10-25 21:15:05] MENSAGEM RECEBIDA VIA BROKER MQTT:
-  Topico:  sensores/umidade
-  QoS:     0
-  Payload: 57.5
-============================================================
-```
+---
 
-### Teste 3: Gráficos de Histórico em Tempo Real no Home Assistant
-Acessando a aba **Histórico** em `http://localhost:8123`, a curva de variação térmica transmitida pelo sensor MQTT-SN via UDP é plotada continuamente:
+### 📸 Print 1: Status de Execução dos 5 Contêineres (Terminal)
+* **Objetivo:** Provar que toda a infraestrutura está operacional em contêineres Docker.
+* **Comando executado no terminal:**
+  ```bash
+  docker compose ps
+  ```
+* **Evidência obtida:**
+  ```text
+  NAME               IMAGE                                          COMMAND                  SERVICE            STATUS
+  homeassistant      ghcr.io/home-assistant/home-assistant:stable   "/init"                  homeassistant      Up (healthy)
+  mqtt-broker        eclipse-mosquitto:2                            "/docker-entrypoint.…"   mosquitto          Up
+  mqtt-subscriber    home-assistant-iot-subscriber-mqtt             "python subscriber.py"   subscriber-mqtt    Up
+  mqttsn-gateway     home-assistant-iot-gateway-mqttsn              "/app/MQTT-SNGateway…"   gateway-mqttsn     Up
+  mqttsn-publisher   home-assistant-iot-publisher-mqttsn            "python publisher.py"    publisher-mqttsn   Up
+  ```
 
-![Gráfico de Histórico de Temperatura](historico_temperatura.png)
+---
 
-### Teste 4: Painel Principal do Home Assistant (Dashboard)
-Na tela inicial do Home Assistant, os sensores integrados aparecem atualizando os valores analógicos a cada 5 segundos:
-
-![Dashboard com Sensores](docs/img/dashboard_favoritos.png)
+### 📸 Print 2: Fluxo de Dados Convertido (Terminal do Subscriber)
+* **Objetivo:** Provar que o sensor disparou via UDP (MQTT-SN), o Gateway converteu para TCP (MQTT) e o broker entregou as mensagens intactas.
+* **Comando executado no terminal:**
+  ```bash
+  docker compose logs subscriber-mqtt --tail=10
+  ```
+* **Evidência obtida (mensagens chegando a cada 5 segundos):**
+  ```text
+  ============================================================
+  [2026-10-25 21:15:05] MENSAGEM RECEBIDA VIA BROKER MQTT:
+    Topico:  sensores/temperatura
+    QoS:     0
+    Payload: 22.9
+  ============================================================
+  ============================================================
+  [2026-10-25 21:15:05] MENSAGEM RECEBIDA VIA BROKER MQTT:
+    Topico:  sensores/umidade
+    QoS:     0
+    Payload: 57.5
+  ============================================================
+  ```
 
 ---
 
@@ -356,9 +354,9 @@ Para visualizar as medições em tempo real e a curva de variação do sensor Io
 
 4. O Home Assistant traçará instantaneamente o gráfico contínuo com os valores oscilando ao vivo a cada 5 segundos:
 
-![Visualização no Histórico](docs/img/historico_temperatura.png)
+![Visualização no Histórico](docs/img/historico_temperatura_e_umidade.png)
 
-5. (Opcional) Na tela inicial (**Visão Geral**), os sensores também já estarão disponíveis no card de **Favoritos** mostrando o valor instantâneo atual (`23,7 °C` e `54,2%`):
+5. Na tela inicial (**Visão Geral**), os sensores também já estarão disponíveis no card de **Favoritos** mostrando o valor instantâneo atual (`23,7 °C` e `54,2%`):
 
-![Visualização na Visão Geral](docs/img/dashboard_favoritos.png)
+![Visualização na Visão Geral](docs/img/favoritos.png)
 
