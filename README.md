@@ -323,7 +323,7 @@ newgrp docker
 
 ### Passo 2: Clonar o repositório e subir os contêineres
 ```bash
-git clone https://github.com/SEU_USUARIO/home-assistant-iot.git
+git clone https://github.com/mariacarlyni-pereira/home-assistant-iot.git
 cd home-assistant-iot
 docker compose up -d --build
 ```
