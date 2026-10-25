@@ -301,7 +301,7 @@ Saída capturada em tempo real (provando a chegada dos dados convertidos via bro
 ### Teste 3: Gráficos de Histórico em Tempo Real no Home Assistant
 Acessando a aba **Histórico** em `http://localhost:8123`, a curva de variação térmica transmitida pelo sensor MQTT-SN via UDP é plotada continuamente:
 
-![Gráfico de Histórico de Temperatura](docs/img/historico_temperatura.png)
+![Gráfico de Histórico de Temperatura](historico_temperatura.png)
 
 ### Teste 4: Painel Principal do Home Assistant (Dashboard)
 Na tela inicial do Home Assistant, os sensores integrados aparecem atualizando os valores analógicos a cada 5 segundos:
