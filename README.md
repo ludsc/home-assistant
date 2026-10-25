@@ -73,7 +73,7 @@ flowchart LR
 
 ---
 
-## 3. Pré-requisitos (Na Máquina do Aluno / VM Ubuntu)
+## 3. Pré-requisitos (Na Máquina Ubuntu)
 
 Em uma máquina com **Ubuntu 22.04 ou superior** (em VM VMware, VirtualBox ou WSL2), abra o terminal e execute:
 
