@@ -4,18 +4,6 @@ Projeto prático desenvolvido para demonstrar a integração de dispositivos IoT
 
 Todo o ambiente roda isolado em contêineres Docker orquestrados pelo Docker Compose.
 
----
-
-## 📌 Arquitetura da Solução
-
-O fluxo de dados do laboratório funciona da seguinte forma:
-
-```mermaid
-flowchart LR
-    PUB["Publisher (Sensor IoT)<br/>Python / UDP:10000"] -->|MQTT-SN| GW["Gateway MQTT-SN<br/>Eclipse Paho (C++)"]
-    GW -->|MQTT (TCP:1883)| BROKER["Broker MQTT<br/>Eclipse Mosquitto"]
-    BROKER -->|sensores/#| SUB["Subscriber (Logs)<br/>Python"]
-    BROKER -->|sensores/#| HA["Home Assistant<br/>Dashboard :8123"]
 ```
 
 ### O que faz cada componente:
@@ -105,15 +93,6 @@ Você verá as mensagens formatadas de temperatura e umidade caindo a cada 5 seg
 
 ---
 
-## ⚙️ Detalhes Importantes de Implementação
-
-Durante o desenvolvimento do laboratório, dois pontos técnicos foram fundamentais para o funcionamento correto:
-
-* **Regra do `MsgId` no MQTT-SN (QoS 0):** Pela norma MQTT-SN v1.2, mensagens publicadas com `QoS = 0` devem obrigatoriamente ter o campo `MsgId` preenchido com `0x0000`. Usar qualquer valor diferente faz o Gateway rejeitar os pacotes silenciosamente com `Invalid MsgId`. Isso já está tratado no `publisher.py`.
-* **Compilação do Gateway Paho:** O repositório atual da Eclipse Foundation compila o gateway usando CMake (`./build.sh udp`) e depende de `libssl-dev`. Por isso, o Dockerfile foi montado sobre `debian:bookworm-slim`, evitando problemas de compatibilidade com a biblioteca `glibc`.
-* **Portas de Rede:** O MQTT-SN roda sobre **UDP** na porta `10000`, enquanto o MQTT tradicional roda sobre **TCP** na porta `1883`.
-
----
 
 ## 🛑 Como Parar o Ambiente
 
