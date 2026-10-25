@@ -1,0 +1,93 @@
+services:
+  # ============================================================================
+  # 1. BROKER MQTT: Eclipse Mosquitto
+  # ============================================================================
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mqtt-broker
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+    networks:
+      - iot-net
+
+  # ============================================================================
+  # 2. GATEWAY MQTT-SN: Eclipse Paho Gateway (UDP -> TCP MQTT)
+  # ============================================================================
+  gateway-mqttsn:
+    build:
+      context: ./gateway-mqttsn
+      dockerfile: Dockerfile
+    container_name: mqttsn-gateway
+    restart: unless-stopped
+    ports:
+      - "10000:10000/udp"
+    depends_on:
+      - mosquitto
+    networks:
+      - iot-net
+
+  # ============================================================================
+  # 3. SUBSCRIBER MQTT: Assinante dos topicos MQTT para exibicao/logs
+  # ============================================================================
+  subscriber-mqtt:
+    build:
+      context: ./subscriber-mqtt
+      dockerfile: Dockerfile
+    container_name: mqtt-subscriber
+    restart: unless-stopped
+    environment:
+      - BROKER_HOST=mosquitto
+      - BROKER_PORT=1883
+      - SUBSCRIBE_TOPIC=sensores/#
+    depends_on:
+      - mosquitto
+    networks:
+      - iot-net
+
+  # ============================================================================
+  # 4. PUBLISHER MQTT-SN: Dispositivo sensor IoT simulado (UDP)
+  # ============================================================================
+  publisher-mqttsn:
+    build:
+      context: ./publisher-mqttsn
+      dockerfile: Dockerfile
+    container_name: mqttsn-publisher
+    restart: unless-stopped
+    environment:
+      - GATEWAY_HOST=gateway-mqttsn
+      - GATEWAY_PORT=10000
+      - CLIENT_ID=Sensor-SN-01
+      - PUBLISH_INTERVAL=5
+    depends_on:
+      - gateway-mqttsn
+    networks:
+      - iot-net
+
+  # ============================================================================
+  # 5. HOME ASSISTANT: Plataforma de automacao e visualizacao
+  # ============================================================================
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: homeassistant
+    restart: unless-stopped
+    ports:
+      - "8123:8123"
+    volumes:
+      - ./homeassistant:/config
+    depends_on:
+      - mosquitto
+    networks:
+      - iot-net
+
+networks:
+  iot-net:
+    driver: bridge
+
+volumes:
+  mosquitto_data:
+  mosquitto_log:

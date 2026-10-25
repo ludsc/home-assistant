@@ -1,0 +1,23 @@
+# Docker volumes e logs locais
+mosquitto/data/
+mosquitto/log/
+*.log
+
+# Arquivos de estado e banco do Home Assistant gerados em tempo de execucao
+homeassistant/.storage/
+homeassistant/home-assistant_v2.db*
+homeassistant/home-assistant.log*
+homeassistant/.HA_VERSION
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+
+# SO e IDEs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

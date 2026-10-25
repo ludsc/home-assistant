@@ -1,0 +1,21 @@
+# ==============================================================================
+# Home Assistant Core - Configuration
+# ==============================================================================
+
+default_config:
+
+# Definicao manual de entidades de sensores via MQTT
+mqtt:
+  sensor:
+    - name: "Temperatura Sala (MQTT-SN)"
+      unique_id: "sensor_temperatura_sala_mqttsn"
+      state_topic: "sensores/temperatura"
+      unit_of_measurement: "°C"
+      device_class: "temperature"
+      state_class: "measurement"
+    - name: "Umidade Sala (MQTT-SN)"
+      unique_id: "sensor_umidade_sala_mqttsn"
+      state_topic: "sensores/umidade"
+      unit_of_measurement: "%"
+      device_class: "humidity"
+      state_class: "measurement"
