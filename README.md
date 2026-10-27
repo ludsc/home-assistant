@@ -260,55 +260,7 @@ Todos os comandos devem ser executados na raiz do projeto:
 
 ---
 
-## 6. Testes Realizados e Evidências de Validação (Guia de Prints)
-
-Para comprovar o funcionamento de ponta a ponta da arquitetura, os testes foram organizados em **4 capturas de tela (prints) obrigatórias**:
-
----
-
-### 📸 Print 1: Status de Execução dos 5 Contêineres (Terminal)
-* **Objetivo:** Provar que toda a infraestrutura está operacional em contêineres Docker.
-* **Comando executado no terminal:**
-  ```bash
-  docker compose ps
-  ```
-* **Evidência obtida:**
-  ```text
-  NAME               IMAGE                                          COMMAND                  SERVICE            STATUS
-  homeassistant      ghcr.io/home-assistant/home-assistant:stable   "/init"                  homeassistant      Up (healthy)
-  mqtt-broker        eclipse-mosquitto:2                            "/docker-entrypoint.…"   mosquitto          Up
-  mqtt-subscriber    home-assistant-iot-subscriber-mqtt             "python subscriber.py"   subscriber-mqtt    Up
-  mqttsn-gateway     home-assistant-iot-gateway-mqttsn              "/app/MQTT-SNGateway…"   gateway-mqttsn     Up
-  mqttsn-publisher   home-assistant-iot-publisher-mqttsn            "python publisher.py"    publisher-mqttsn   Up
-  ```
-
----
-
-### 📸 Print 2: Fluxo de Dados Convertido (Terminal do Subscriber)
-* **Objetivo:** Provar que o sensor disparou via UDP (MQTT-SN), o Gateway converteu para TCP (MQTT) e o broker entregou as mensagens intactas.
-* **Comando executado no terminal:**
-  ```bash
-  docker compose logs subscriber-mqtt --tail=10
-  ```
-* **Evidência obtida (mensagens chegando a cada 5 segundos):**
-  ```text
-  ============================================================
-  [2026-10-25 21:15:05] MENSAGEM RECEBIDA VIA BROKER MQTT:
-    Topico:  sensores/temperatura
-    QoS:     0
-    Payload: 22.9
-  ============================================================
-  ============================================================
-  [2026-10-25 21:15:05] MENSAGEM RECEBIDA VIA BROKER MQTT:
-    Topico:  sensores/umidade
-    QoS:     0
-    Payload: 57.5
-  ============================================================
-  ```
-
----
-
-## 7. Instruções para que Outro Aluno Consiga Reproduzir o Ambiente
+## 6. Instruções para que Outro Aluno Consiga Reproduzir o Ambiente
 
 Qualquer aluno pode reproduzir exatamente este ambiente em uma máquina com Ubuntu (VMware, VirtualBox ou WSL2) seguindo estes 3 passos:
 
@@ -352,7 +304,7 @@ Para visualizar as medições em tempo real e a curva de variação do sensor Io
    * Digite `temperatura` e selecione **`Temperatura Sala (MQTT-SN)`**.
    * Clique novamente em **`+ Adicionar alvo`**, digite `umidade` e selecione **`Umidade Sala (MQTT-SN)`**.
 
-4. O Home Assistant traçará instantaneamente o gráfico contínuo com os valores oscilando ao vivo a cada 5 segundos:
+7. O Home Assistant traçará instantaneamente o gráfico contínuo com os valores oscilando ao vivo a cada 5 segundos:
 
 ![Visualização no Histórico](historico_temperatura_e_umidade.png)
 
