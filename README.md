@@ -4,7 +4,59 @@ Este repositório contém o tutorial prático e os arquivos de configuração pa
 
 ---
 
-## 1. Arquitetura e Descrição dos Componentes
+## 1. Instruções para que Outro Aluno Consiga Reproduzir o Ambiente
+
+Qualquer aluno pode reproduzir exatamente este ambiente em uma máquina com Ubuntu (VMware, VirtualBox ou WSL2) seguindo estes 3 passos:
+
+### Passo 1: Instalar o Docker (se ainda não tiver)
+```bash
+sudo apt update && sudo apt install -y docker.io docker-compose-v2 git
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+### Passo 2: Clonar o repositório e subir os contêineres
+```bash
+git clone https://github.com/mariacarlyni-pereira/home-assistant-iot.git
+cd home-assistant-iot
+docker compose up -d --build
+```
+
+### Passo 3: Conectar o Home Assistant ao Broker MQTT
+1. Abra o navegador em: `http://localhost:8123` (ou `http://<IP-DA-VM>:8123`).
+2. Conclua o cadastro inicial criando seu usuário e senha de administrador.
+3. No menu lateral esquerdo, vá em **Configurações** $\rightarrow$ **Dispositivos e Serviços**.
+4. Clique no botão **+ Adicionar Integração** e digite `MQTT`.
+5. Preencha os parâmetros de conexão:
+   * **Broker:** `mosquitto`
+   * **Porta:** `1883`
+   * *(Deixar nome de usuário e senha em branco)*
+   * Clique em **Enviar**.
+
+---
+
+### Passo 4: Como Visualizar o Gráfico no Histórico (Passo a Passo)
+
+Para visualizar as medições em tempo real e a curva de variação do sensor IoT:
+
+1. No menu lateral esquerdo, clique em **Histórico** (ícone de barras gráficas, logo abaixo de "Atividade").
+   > **Atenção:** Não utilize a aba "Atividade" para buscar medições analógicas, pois ela monitora apenas eventos discretos de sistema. As curvas de telemetria ficam em **Histórico**.
+
+2. No painel esquerdo da tela de Histórico, clique no botão azul **`+ Adicionar alvo`**.
+3. Na janela de pesquisa:
+   * Certifique-se de que o filtro **`Entidades`** está marcado em azul (evite o filtro "Dispositivos").
+   * Digite `temperatura` e selecione **`Temperatura Sala (MQTT-SN)`**.
+   * Clique novamente em **`+ Adicionar alvo`**, digite `umidade` e selecione **`Umidade Sala (MQTT-SN)`**.
+
+2. O Home Assistant traçará instantaneamente o gráfico contínuo com os valores oscilando ao vivo a cada 5 segundos:
+
+![Visualização no Histórico](historico_temperatura_e_umidade.png)
+
+3. Na tela inicial (**Visão Geral**), os sensores também já estarão disponíveis no card de **Favoritos** mostrando o valor instantâneo atual:
+
+![Visualização na Visão Geral](favoritos.png)
+
+## 4. Arquitetura e Descrição dos Componentes
 
 O ambiente é composto por **5 componentes conteinerizados** conectados em uma rede interna isolada em modo bridge (`iot-net`):
 
@@ -26,7 +78,7 @@ flowchart LR
 
 ---
 
-## 2. Orquestração com Docker Compose (`compose.yaml`)
+## 5. Orquestração com Docker Compose (`compose.yaml`)
 
 O arquivo [`compose.yaml`](compose.yaml) gerencia todo o ciclo de vida dos serviços, volumes e mapeamento de portas:
 
@@ -113,7 +165,7 @@ volumes:
 
 ---
 
-## 3. Arquivos de Configuração do Broker e do Gateway
+## 6. Arquivos de Configuração do Broker e do Gateway
 
 ### 3.1. Broker Mosquitto (`mosquitto/config/mosquitto.conf`)
 Define a escuta na interface de rede padrão, permissão de conexões anônimas para testes e persistência local:
@@ -153,7 +205,7 @@ MulticastTTL=1
 
 ---
 
-## 4. Dockerfiles e Código-Fonte dos Serviços Customizados
+## 7. Dockerfiles e Código-Fonte dos Serviços Customizados
 
 ### 4.1. Gateway MQTT-SN (`gateway-mqttsn/Dockerfile`)
 Compila nativamente o código C++ do *Eclipse Paho MQTT-SN Gateway* utilizando CMake e OpenSSL sobre imagem `debian:bookworm-slim`:
@@ -219,7 +271,7 @@ mqtt:
 
 ---
 
-## 5. Comandos para Iniciar, Parar e Verificar os Serviços
+## 8. Comandos para Iniciar, Parar e Verificar os Serviços
 
 Todos os comandos devem ser executados na raiz do projeto:
 
@@ -259,56 +311,4 @@ Todos os comandos devem ser executados na raiz do projeto:
   ```
 
 ---
-
-## 6. Instruções para que Outro Aluno Consiga Reproduzir o Ambiente
-
-Qualquer aluno pode reproduzir exatamente este ambiente em uma máquina com Ubuntu (VMware, VirtualBox ou WSL2) seguindo estes 3 passos:
-
-### Passo 1: Instalar o Docker (se ainda não tiver)
-```bash
-sudo apt update && sudo apt install -y docker.io docker-compose-v2 git
-sudo usermod -aG docker $USER
-newgrp docker
-```
-
-### Passo 2: Clonar o repositório e subir os contêineres
-```bash
-git clone https://github.com/mariacarlyni-pereira/home-assistant-iot.git
-cd home-assistant-iot
-docker compose up -d --build
-```
-
-### Passo 3: Conectar o Home Assistant ao Broker MQTT
-1. Abra o navegador em: `http://localhost:8123` (ou `http://<IP-DA-VM>:8123`).
-2. Conclua o cadastro inicial criando seu usuário e senha de administrador.
-3. No menu lateral esquerdo, vá em **Configurações** $\rightarrow$ **Dispositivos e Serviços**.
-4. Clique no botão **+ Adicionar Integração** e digite `MQTT`.
-5. Preencha os parâmetros de conexão:
-   * **Broker:** `mosquitto`
-   * **Porta:** `1883`
-   * *(Deixar nome de usuário e senha em branco)*
-   * Clique em **Enviar**.
-
----
-
-### Passo 4: Como Visualizar o Gráfico no Histórico (Passo a Passo)
-
-Para visualizar as medições em tempo real e a curva de variação do sensor IoT:
-
-1. No menu lateral esquerdo, clique em **Histórico** (ícone de barras gráficas, logo abaixo de "Atividade").
-   > **Atenção:** Não utilize a aba "Atividade" para buscar medições analógicas, pois ela monitora apenas eventos discretos de sistema. As curvas de telemetria ficam em **Histórico**.
-
-2. No painel esquerdo da tela de Histórico, clique no botão azul **`+ Adicionar alvo`**.
-3. Na janela de pesquisa:
-   * Certifique-se de que o filtro **`Entidades`** está marcado em azul (evite o filtro "Dispositivos").
-   * Digite `temperatura` e selecione **`Temperatura Sala (MQTT-SN)`**.
-   * Clique novamente em **`+ Adicionar alvo`**, digite `umidade` e selecione **`Umidade Sala (MQTT-SN)`**.
-
-7. O Home Assistant traçará instantaneamente o gráfico contínuo com os valores oscilando ao vivo a cada 5 segundos:
-
-![Visualização no Histórico](historico_temperatura_e_umidade.png)
-
-5. Na tela inicial (**Visão Geral**), os sensores também já estarão disponíveis no card de **Favoritos** mostrando o valor instantâneo atual:
-
-![Visualização na Visão Geral](favoritos.png)
 
